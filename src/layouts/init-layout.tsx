@@ -84,10 +84,11 @@ const InitLayout: FC<RouteConfigComponentProps> = memo(props => {
         }
         fetchUserSuccess(result)
       })
-      .catch(e => {
+      .catch(() => {
+        /** 不做任何操作交给子组件来去处理 */
         /** 获取用户信息失败：设置用户信息为空，登录状态为假，清空token，重定向到登录页 */
-        fetchUserFailed()
-        props.history.replace('/system/login')
+        // fetchUserFailed()
+        // props.history.replace('/system/login')
       })
       .finally(() => {
         /** 设置 enterLoading 为 false */

@@ -1,11 +1,11 @@
-import { FC, memo, useMemo, useState } from 'react'
+import { FC, memo, useCallback, useMemo, useState } from 'react'
 import { Spin, Form, Input, Button, message, Grid } from 'antd'
 import { UserOutlined, LockOutlined } from '@ant-design/icons'
 import { Link, Redirect } from 'react-router-dom'
 import Texty from 'rc-texty'
 import 'rc-texty/assets/index.css'
-import { Dispatch } from 'redux'
-import { connect } from 'react-redux'
+/** 导入Hooks api */
+import { useDispatch, useSelector } from 'react-redux'
 import { LoginWithRegisterContainer, BrandWra, FormAreaWra } from './style'
 import { loginRequest } from '../../../api/user'
 import { IStoreState } from '../../../store/types'
@@ -75,8 +75,19 @@ interface LoginProps {
 }
 
 const Login: FC<LoginProps> = props => {
-  const { isLogin, loginSuccess } = props
   const [isLoading, setLoading] = useState(false)
+
+  const isLogin = useSelector<IStoreState, Boolean>(state => state.user.isLogin)
+  const dispatch = useDispatch()
+
+  const loginSuccess = (successResult: LoginRequestResult) => {
+    const { token, userInfo } = successResult
+
+    dispatch(handleSetToken(token))
+    dispatch(handleSetRole(getUserType(userInfo)))
+    dispatch(handleChangeUserInfo(userInfo))
+    dispatch(handleSetIsLogin(true))
+  }
 
   const onFinish = useMemo(() => {
     return throttle((result: LoginFormResult) => {
@@ -149,26 +160,4 @@ const Login: FC<LoginProps> = props => {
   )
 }
 
-const mapState = (store: IStoreState) => {
-  const { isLogin } = store.user
-
-  return {
-    isLogin,
-  }
-}
-
-const mapDispatch = (dispatch: Dispatch) => {
-  return {
-    /** 登录成功 */
-    loginSuccess(successResult: LoginRequestResult) {
-      const { token, userInfo } = successResult
-
-      dispatch(handleSetToken(token))
-      dispatch(handleSetRole(getUserType(userInfo)))
-      dispatch(handleChangeUserInfo(userInfo))
-      dispatch(handleSetIsLogin(true))
-    },
-  }
-}
-
-export default connect(mapState, mapDispatch)(Login)
+export default Login
