@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux'
 import { RouteConfigComponentProps } from 'react-router-config'
 import { renderRoutes } from 'react-router-config'
 import { IStoreState } from '../store/types'
+import Container from '../components/container'
 
 const BaseLayout: FC<RouteConfigComponentProps> = memo(props => {
   const { route } = props
@@ -16,11 +17,11 @@ const BaseLayout: FC<RouteConfigComponentProps> = memo(props => {
   }
 
   return (
-    <div>
+    <Container>
       <Suspense fallback={<div>base loading</div>}>
         {renderRoutes(route?.routes)}
       </Suspense>
-    </div>
+    </Container>
   )
 })
 
