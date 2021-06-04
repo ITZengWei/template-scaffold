@@ -48,6 +48,12 @@ const Forbidden = lazy(() => import('../views/error/forbidden'))
 /** 引入分析页面 */
 const Analyses = lazy(() => import('../views/analyses'))
 
+/** 用户中心页面  */
+const AccountCenter = lazy(() => import('../views/account-center'))
+
+/** 用户设置页面 */
+const AccountSetting = lazy(() => import('../views/account-setting'))
+
 /** 系统路由配置 */
 const systemRoute: IRoute = {
   path: '/system',
@@ -133,6 +139,16 @@ const businessRoutes: IRoute = {
       meta: {
         title: '分析页',
       },
+    },
+    {
+      path: '/account/center',
+      component: AccountCenter,
+      meta: { title: '个人中心' },
+    },
+    {
+      path: '/account/setting',
+      component: AccountSetting,
+      meta: { title: '个人设置' },
     },
   ],
 }
