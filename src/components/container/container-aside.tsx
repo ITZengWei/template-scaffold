@@ -1,4 +1,4 @@
-import { FC, memo, ReactNode, useMemo, useState } from 'react'
+import { FC, memo, ReactNode, useState } from 'react'
 import { Layout, Menu, MenuProps } from 'antd'
 import { useLocation, useHistory } from 'react-router-dom'
 import { DashboardOutlined, UserOutlined } from '@ant-design/icons'
@@ -7,15 +7,7 @@ import logoImg from '../../asserts/images/ContainerAside/banner.png'
 import { ContainerAsideInner } from './style'
 import { combineURL } from '../../utils/tool'
 import config from '../../config'
-
-/** 将 url 转换为 url数组 (/a/b/c => ['/a', '/b', '/c'])*/
-export const url2paths = (url: string) => {
-  /** 根据 / 分割 url(并且去除第一个 / ) ['a', 'b', 'c'] */
-  const paths = url.slice(1).split('/')
-
-  /** 为每一个成员前面添加一个 '/' */
-  return paths.map((item, index) => '/' + paths.slice(0, index + 1).join('/'))
-}
+import useMenuSelectedKeys from '../../hooks/use-menu-selected-keys'
 
 /** 侧边栏菜单接口 */
 export interface IAsideMenu {
@@ -40,25 +32,6 @@ const AsideMenu: FC = memo(() => {
   const location = useLocation()
 
   const history = useHistory()
-
-  const menuSelectedKeys = useMemo(() => {
-    return url2paths(location.pathname)
-  }, [location.pathname])
-
-  const menuProps: MenuProps = {
-    theme: 'dark',
-    mode: 'inline',
-    selectedKeys: menuSelectedKeys,
-    defaultOpenKeys: menuSelectedKeys.slice(0, -1),
-    onClick(info) {
-      const { key } = info
-      const pathname = combineURL(config.BASENAME, key as string)
-
-      history.push(pathname)
-    },
-  }
-
-  console.log(menuProps)
 
   const menus: IAsideMenu[] = [
     {
@@ -95,9 +68,29 @@ const AsideMenu: FC = memo(() => {
           title: '个人设置',
           path: '/account/setting',
         },
+        {
+          _id: '203',
+          title: '用户详情',
+          path: '/account/info',
+        },
       ],
     },
   ]
+
+  const menuSelectedKeys = useMenuSelectedKeys(location.pathname, menus)
+
+  const menuProps: MenuProps = {
+    theme: 'dark',
+    mode: 'inline',
+    selectedKeys: menuSelectedKeys,
+    defaultOpenKeys: menuSelectedKeys.slice(0, -1),
+    onClick(info) {
+      const { key } = info
+      const pathname = combineURL(config.BASENAME, key as string)
+
+      history.push(pathname)
+    },
+  }
 
   function renderChildrenMenu(navList: IAsideMenu[]): ReactNode {
     /** 转换为 Menu */
