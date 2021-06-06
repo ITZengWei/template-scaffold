@@ -1,13 +1,13 @@
-import { FC, memo, ReactNode, useState } from 'react'
+import { FC, memo, ReactNode, useContext, useState } from 'react'
 import { Layout, Menu, MenuProps } from 'antd'
 import { useLocation, useHistory } from 'react-router-dom'
-import { DashboardOutlined, UserOutlined } from '@ant-design/icons'
 import { SiderProps } from 'antd/lib/layout/Sider'
 import logoImg from '../../asserts/images/ContainerAside/banner.png'
 import { ContainerAsideInner } from './style'
 import { combineURL } from '../../utils/tool'
 import config from '../../config'
 import useMenuSelectedKeys from '../../hooks/use-menu-selected-keys'
+import { MenuContext } from './context'
 
 /** 侧边栏菜单接口 */
 export interface IAsideMenu {
@@ -33,49 +33,7 @@ const AsideMenu: FC = memo(() => {
 
   const history = useHistory()
 
-  const menus: IAsideMenu[] = [
-    {
-      _id: '100',
-      title: '仪表盘',
-      icon: <DashboardOutlined />,
-      path: '/dashboard',
-      children: [
-        {
-          _id: '101',
-          title: '分析页',
-          path: '/dashboard/analyses',
-        },
-        {
-          _id: '102',
-          title: '工作台',
-          path: '/dashboard/workplace',
-        },
-      ],
-    },
-    {
-      _id: '200',
-      title: '用户页',
-      icon: <UserOutlined />,
-      path: '/account',
-      children: [
-        {
-          _id: '201',
-          title: '个人中心',
-          path: '/account/center',
-        },
-        {
-          _id: '202',
-          title: '个人设置',
-          path: '/account/setting',
-        },
-        {
-          _id: '203',
-          title: '用户详情',
-          path: '/account/info',
-        },
-      ],
-    },
-  ]
+  const { menus } = useContext(MenuContext)
 
   const menuSelectedKeys = useMenuSelectedKeys(location.pathname, menus)
 
@@ -118,7 +76,13 @@ const AsideMenu: FC = memo(() => {
   return <Menu {...menuProps}>{renderChildrenMenu(menus)}</Menu>
 })
 
-const ContainerAside: FC = memo(props => {
+interface ContainerAsideProps {
+  /** 当前是否为移动端(动态设置侧边栏) */
+  isMobile: boolean
+}
+
+const ContainerAside: FC<ContainerAsideProps> = memo(props => {
+  const { isMobile } = props
   const [collapsed, setCollapsed] = useState(false)
 
   /** 切换关闭与展开回调 */
@@ -128,11 +92,17 @@ const ContainerAside: FC = memo(props => {
 
   /** 根据是否移动端 动态返回 Sider 属性 */
   const getSliderProps: () => SiderProps = () => {
-    const sliderProps: SiderProps = {
-      collapsible: true,
-      collapsed: collapsed,
-      onCollapse: handleCollapse,
-      breakpoint: 'lg',
+    const sliderProps: SiderProps = {}
+
+    /** 获取收缩效果，如果是移动端 收缩效果由父组件控制，反之由 内部属性控制 */
+    if (isMobile) {
+      sliderProps.collapsed = false
+      sliderProps.style = { height: '100%' }
+    } else {
+      sliderProps.collapsible = true
+      sliderProps.collapsed = collapsed
+      sliderProps.onCollapse = handleCollapse
+      sliderProps.breakpoint = 'lg'
     }
 
     return sliderProps

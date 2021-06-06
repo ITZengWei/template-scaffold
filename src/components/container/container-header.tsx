@@ -8,10 +8,28 @@ import {
   UserOutlined,
   SettingOutlined,
   LogoutOutlined,
+  MenuFoldOutlined,
 } from '@ant-design/icons'
 import { ContainerContext } from './context'
 import defaultAvatar from '../../asserts/images/default.png'
 import { SettingStyle } from '../../styles'
+import ContainerBreadcrumb from './container-breadcrumb'
+
+interface HeaderToggleProps {
+  /** 切换展示和隐藏 */
+  toggle: any
+}
+
+/** 头部切换侧边栏展示组件 */
+const HeaderToggle: FC<HeaderToggleProps> = memo(props => {
+  const { toggle } = props
+
+  return (
+    <div className="toggle" onClick={toggle}>
+      <MenuFoldOutlined />
+    </div>
+  )
+})
 
 /** 头部控制项组件 */
 const HeaderOptions: FC = memo(() => {
@@ -91,7 +109,14 @@ const HeaderDate: FC = memo(() => {
   return <div className="date">{dateStr}</div>
 })
 
-const ContainerHeader: FC = memo(props => {
+interface ContainerHeaderProps extends HeaderToggleProps {
+  /** 当前是否为移动端(动态设置侧边栏) */
+  isMobile: boolean
+}
+
+const ContainerHeader: FC<ContainerHeaderProps> = memo(props => {
+  const { isMobile, toggle } = props
+
   const headerStyle: CSSProperties = {
     position: 'relative',
     padding: '5px 30px',
@@ -104,7 +129,11 @@ const ContainerHeader: FC = memo(props => {
     <Layout.Header style={headerStyle}>
       <ContainerHeaderInner>
         <div className="top">
-          <div></div>
+          {/* 移动端 切换展示侧边栏按钮 */}
+          {isMobile && <HeaderToggle toggle={toggle} />}
+
+          {/* 面包屑 */}
+          <ContainerBreadcrumb />
 
           {/* 头部控制项 */}
           <HeaderOptions />
