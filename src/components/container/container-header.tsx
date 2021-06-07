@@ -14,6 +14,7 @@ import { ContainerContext } from './context'
 import defaultAvatar from '../../asserts/images/default.png'
 import { SettingStyle } from '../../styles'
 import ContainerBreadcrumb from './container-breadcrumb'
+import ContainerHistory from './container-history'
 
 interface HeaderToggleProps {
   /** 切换展示和隐藏 */
@@ -140,7 +141,10 @@ const ContainerHeader: FC<ContainerHeaderProps> = memo(props => {
         </div>
         <div className="bottom">
           <Row align="middle" style={{ height: '100%' }}>
-            <Col md={{ span: 16 }} xs={{ span: 24 }}></Col>
+            <Col md={{ span: 16 }} xs={{ span: 24 }}>
+              {/* 导航历史 */}
+              <ContainerHistory />
+            </Col>
             <Col md={{ span: 7, offset: 1 }} xs={{ span: 0 }}>
               <HeaderDate />
             </Col>
