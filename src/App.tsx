@@ -8,19 +8,22 @@ import routes from './routes/index'
 import zhCN from 'antd/lib/locale/zh_CN'
 import { BasicStyle, GenericStyle } from './styles'
 import 'antd/dist/antd.css'
+import ErrorBoundary from './components/error-boundary'
 
 function App() {
   return (
-    <ConfigProvider locale={zhCN}>
-      <Provider store={store}>
-        <GenericStyle />
-        <BasicStyle />
+    <ErrorBoundary>
+      <ConfigProvider locale={zhCN}>
+        <Provider store={store}>
+          <GenericStyle />
+          <BasicStyle />
 
-        <Router basename={config.BASENAME}>
-          <div className="app">{renderRoutes(routes)}</div>
-        </Router>
-      </Provider>
-    </ConfigProvider>
+          <Router basename={config.BASENAME}>
+            <div className="app">{renderRoutes(routes)}</div>
+          </Router>
+        </Provider>
+      </ConfigProvider>
+    </ErrorBoundary>
   )
 }
 
